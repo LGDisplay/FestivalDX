@@ -218,7 +218,7 @@
 
                 .contestant-image {
                     width: 100%;
-                    max-height: 650px;
+                    max-height: 1000px;
                     object-fit: cover;
                     border-radius: 10px;
                     margin: 15px 0;
@@ -249,30 +249,30 @@
             </div>
 
             <div class="scoring-section" style="margin-top: 110px;">
-                <div>
+                <div >
                     <label style="color: blue ; font-size: 25px; font: bold;">Idea 발굴 관점</label>
                     <input type="number" id="innovationScore" min="0" max="40" class="score-input" placeholder="Idea 발굴 관점 (0-40)">
                     <div id="innovationError" class="error-message"></div>
                 </div>
 
-                <div>
+                <div style="margin-top: 30px;">
                     <label style="color: rgb(0, 255, 0) ; font-size: 25px; font: bold;" >실효과 평가</label>
                     <input type="number" id="presentationScore" min="0" max="30" class="score-input" placeholder="실효과 평가 (0-30)">
                     <div id="presentationError" class="error-message"></div>
                 </div>
 
-                <div>
+                <div style="margin-top: 30px;">
                     <label style="color: red ; font-size: 25px; font: bold;">Biz 파급 효과 관점</label>
                     <input type="number" id="technicalScore" min="0" max="30" class="score-input" placeholder="Biz 파급 효과 관점 (0-30)">
                     <div id="technicalError" class="error-message"></div>
                 </div>
 
-                <div class="total-score" style="font-size:  25px;">
+                <div class="total-score" style="margin-top: 30px; font-size:  30px;">
                     총 점수: <span id="totalScore">0</span>
                 </div>
             </div>
 
-            <div class="navigation-buttons">
+            <div class="navigation-buttons" >
                 <button id="prevBtn" class="button">이전</button>
                 <button id="nextBtn" class="button">다음</button>
                 <button id="saveBtn" class="button">점수 저장</button>
