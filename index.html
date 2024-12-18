@@ -350,6 +350,9 @@
             savedScores[scoreData.name] = scoreData;
             sessionStorage.setItem('contestantScores', JSON.stringify(savedScores));
         }
+        window.addEventListener('load', () => {
+            sessionStorage.clear();
+        });
 
         function getScoreFromSessionStorage(contestantName) {
             const savedScores = JSON.parse(sessionStorage.getItem('contestantScores') || '{}');
