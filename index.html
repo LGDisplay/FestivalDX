@@ -289,6 +289,14 @@
 
     <script>
         const contestants = [
+        {
+                name: "검사/품질 1",
+                image: "image/검사_품질 1.png"
+            },
+            {
+                name: "검사/품질 2",
+                image: "image/검사_품질 2.png"
+            },
             {
                 name: "생산운영 1",
                 image: "image/생산운영 1.png"
@@ -298,12 +306,12 @@
                 image: "image/생산운영 2.png"
             },
             {
-                name: "검사/품질 1",
-                image: "image/검사_품질 1.png"
+                name: "공정/장비 1",
+                image: "image/공정_장비 1.png"
             },
             {
-                name: "검사/품질 2",
-                image: "image/검사_품질 2.png"
+                name: "공정/장비 2",
+                image: "image/공정_장비 2.png"
             },
             {
                 name: "설계/개발 1",
@@ -312,14 +320,6 @@
             {
                 name: "설계/개발 2",
                 image: "image/LG Display.PNG"
-            },
-            {
-                name: "공정/장비 1",
-                image: "image/공정_장비 1.png"
-            },
-            {
-                name: "공정/장비 2",
-                image: "image/공정_장비 2.png"
             }
         ];
 
@@ -345,7 +345,16 @@
         const innovationErrorEl = document.getElementById('innovationError');
         const presentationErrorEl = document.getElementById('presentationError');
         const technicalErrorEl = document.getElementById('technicalError');
+        function saveScoreToSessionStorage(scoreData) {
+            const savedScores = JSON.parse(sessionStorage.getItem('contestantScores') || '{}');
+            savedScores[scoreData.name] = scoreData;
+            sessionStorage.setItem('contestantScores', JSON.stringify(savedScores));
+        }
 
+        function getScoreFromSessionStorage(contestantName) {
+            const savedScores = JSON.parse(sessionStorage.getItem('contestantScores') || '{}');
+            return savedScores[contestantName] || null;
+        }
         function validateScore(input, errorEl) {
             const value = +input.value;
             const min = +input.min;
@@ -392,10 +401,24 @@
             nameEl.textContent = contestant.name;
             imageEl.src = contestant.image;
 
-            // Reset score inputs and errors
-            innovationInput.value = '';
-            presentationInput.value = '';
-            technicalInput.value = '';
+            // Kiểm tra xem có điểm số đã lưu trước đó không
+            const savedScore = getScoreFromSessionStorage(contestant.name);
+            if (savedScore) {
+                innovationInput.value = savedScore.innovationScore;
+                presentationInput.value = savedScore.presentationScore;
+                technicalInput.value = savedScore.technicalScore;
+                totalScoreEl.textContent = savedScore.totalScore;
+                judgeNameInput.value = savedScore.judgeName;
+            } else {
+                // Reset score inputs and errors
+                innovationInput.value = '';
+                presentationInput.value = '';
+                technicalInput.value = '';
+                totalScoreEl.textContent = '0';
+                // judgeNameInput.value = '';
+            }
+
+            // Reset error messages
             innovationErrorEl.textContent = '';
             presentationErrorEl.textContent = '';
             technicalErrorEl.textContent = '';
@@ -405,10 +428,7 @@
 
             // Update navigation buttons
             prevBtn.disabled = currentContestantIndex === 0;
-            nextBtn.disabled = currentContestantIndex === contestants.length - 1;
-
-            // Reset total score
-            totalScoreEl.textContent = '0';
+            nextBtn.disabled = currentContestantIndex === contestants;
         }
 
         function calculateTotalScore() {
@@ -438,6 +458,7 @@
         function saveScore() {
             // Validate judge name
             const judgeName = judgeNameInput.value.trim();
+
             if (!judgeName || judgeName === "평가자 선택 필요") {
                 alert('평자가를 선택해 주세요!');
                 return;
@@ -460,7 +481,10 @@
             };
 
             try {
-                // Thay thế URL này bằng URL của Google Apps Script của bạn
+                // Lưu vào localStorage
+                saveScoreToSessionStorage(scoreData);
+
+                // Gửi đến Google Apps Script
                 fetch('https://script.google.com/macros/s/AKfycbwvUk2QSyE1jXFmZLC3BCiHPSDN-5NuRcLUkL2CTE2KjnZ7hgmz7N2-DRqGN722HKDiKA/exec', {
                     method: 'POST',
                     body: JSON.stringify(scoreData)
@@ -513,7 +537,13 @@
         saveBtn.addEventListener('click', saveScore);
         closePopupBtn.addEventListener('click', closePopup);
 
-        judgeNameInput.addEventListener('change', updateContestantDisplay);
+        judgeNameInput.addEventListener('change', () => {
+            // Xóa điểm số nếu đổi người đánh giá
+            innovationInput.value = '';
+            presentationInput.value = '';
+            technicalInput.value = '';
+            totalScoreEl.textContent = '0';
+        });
 
         [innovationInput, presentationInput, technicalInput].forEach(input => {
             input.addEventListener('input', () => {
@@ -525,7 +555,6 @@
                 calculateTotalScore();
             });
         });
-
         // Initial display
         updateContestantDisplay();
     </script>
